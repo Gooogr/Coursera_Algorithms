@@ -19,7 +19,7 @@ def SortAndCountInv(arr):
 	if len(arr) < 2:
 		return (arr, 0)
 	else:
-		n = len(arr)/2
+		n = len(arr)//2
 		#print('Splited arrays: ', n, arr[:n], arr[n:])
 		(left_arr, left_inv) = SortAndCountInv(arr[:n])
 		(right_arr, right_inv) = SortAndCountInv(arr[n:])
