@@ -49,35 +49,64 @@ def readUndirectedGraphToDict(filename):
 			temp_dict[int(vertex)] = int(weight)
 		adjdict[label_vertex] = temp_dict
 	return adjdict
+
+# find picture of this graph here: https://www.youtube.com/watch?v=K_1urzWrzLs		
+testGraph = {
+						'A': {'B': 2, 'C': 4, 'D': 7, 'F': 5},
+						'B': {'A': 2, 'D': 6, 'E': 3, 'G': 8},
+						'C': {'A': 4, 'F': 6},
+						'D': {'A': 7, 'B': 6, 'F': 1, 'G': 6},
+						'E': {'B': 3, 'G': 7},
+						'F': {'A': 5, 'C': 6, 'D': 1,'G': 6},
+						'G': {'B': 8, 'D': 6, 'E': 7, 'F': 6}
+					  }
+						
+def getDijkstraPathes(graph, start_vertex):
+
+	# initialization
+	nodes = list(graph.keys())
+	unvisited = {node: 1e6 for node in nodes} #use 1e6 as inf
+	visited = {}
+	current = start_vertex
+	currentDistance = 0
+	unvisited[current] = currentDistance	
+
+	while True:
+		for neighbour, distance in graph[current].items():
+			print(neighbour, distance)
+			# Check, if we aleady visit neighbour of current vertex
+			if neighbour not in unvisited: 
+				continue
+			# Calculate new distance to unvisited neighbour. Replace if it less then previous value
+			newDistance = currentDistance + distance
+			if unvisited[neighbour] > newDistance:
+				unvisited[neighbour] = newDistance
+			print(unvisited)
+			
+		# Update dict if visited nodes with their distances
+		visited[current] = currentDistance
+		# Remove visited vertex from unvisited 
+		del unvisited[current]
 		
-	
-distances = readUndirectedGraphToDict(FILE_PATH)
-nodes = list(distances.keys())
-	
-unvisited = {node: None for node in nodes} #using None as +inf
-visited = {}
-current = 1
-currentDistance = 0
-unvisited[current] = currentDistance	
+		# check if we still have unvisied nodes. If not - break the while loop and return result
+		if not unvisited: 
+			break
+			
+		#greedly choose new vertex with the smallest  distance
+		candidates = [node for node in unvisited.items()]
+		current, currentDistance = sorted(candidates, key = lambda x: x[1])[0]
 
-while True:
-    for neighbour, distance in distances[current].items():
-        if neighbour not in unvisited: continue
-        newDistance = currentDistance + distance
-        if unvisited[neighbour] is None or unvisited[neighbour] > newDistance:
-            unvisited[neighbour] = newDistance
-    visited[current] = currentDistance
-    del unvisited[current]
-    if not unvisited: break
-    candidates = [node for node in unvisited.items() if node[1]]
-    current, currentDistance = sorted(candidates, key = lambda x: x[1])[0]
+	return visited
 
-print(visited)
+
+print('Test example:', getDijkstraPathes(testGraph, 'A'))
+
+assignmnet_graph = readUndirectedGraphToDict(FILE_PATH)
+vertex_dict = getDijkstraPathes(assignmnet_graph, 1)
 
 check_list = [7,37,59,82,99,115,133,165,188,197]
-answer = [visited[key] for key in check_list]
-
-print(answer)
+answer = [vertex_dict[key] for key in check_list]
+print('Assigmnet answer:', answer)
 
 
 
